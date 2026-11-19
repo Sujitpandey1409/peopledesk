@@ -1,14 +1,7 @@
 import axios from "axios";
+import type { Employee, EmployeeInput } from "../types/employee";
 
-export interface Employee {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  created_at: string;
-}
-
-export type EmployeeInput = Pick<Employee, "name" | "email" | "role">;
+export type { Employee, EmployeeInput } from "../types/employee";
 
 type ApiSuccess<T> = {
   success: true;

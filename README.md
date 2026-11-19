@@ -1,28 +1,36 @@
 # PeopleDesk
 
-A straightforward employee directory built with React, TypeScript, Express, and PostgreSQL.
+A small employee directory for keeping names, work emails, and job roles in one place. Built with React, TypeScript, Express, and PostgreSQL.
 
-PeopleDesk keeps employee names, email addresses, and job roles together in one place. The goal is a small, readable full-stack app with the essential create, read, update, and delete workflows.
-
-## Assignment scope
+## What it does
 
 - Add, view, edit, and delete employee records.
-- Build the interface with React and TypeScript, and use Axios to call the API.
-- Expose a REST API with `GET` and `POST /employees`, plus `PUT` and `DELETE /employees/:id`.
-- Store `id`, `name`, `email`, `role`, and `created_at` in PostgreSQL.
-- Enable CORS so the local frontend can call the backend.
-
-Search, pagination, and additional visual polish are optional once the required flows work.
+- Search employees by name.
+- Validate required fields and email addresses.
+- Show clear loading, empty, and error states.
+- Store employee records in PostgreSQL.
 
 ## Stack
 
-- **Frontend:** React, TypeScript, Vite, Axios
-- **Backend:** Node.js, Express, TypeScript
-- **Database:** PostgreSQL (`pg`)
+- **Client:** React, TypeScript, Vite, Axios
+- **API:** Node.js, Express, TypeScript, Zod
+- **Database:** PostgreSQL with `pg`
 
-## Current checkpoint
+## Project layout
 
-The backend connects to PostgreSQL and exposes a health check. The employee API routes and directory interface are the next implementation steps.
+```text
+client/
+  src/
+    api/                 API requests
+    components/          Employee form and directory table
+    types/               Shared employee types
+server/
+  database/              PostgreSQL schema
+  src/
+    config/              Database connection and health check
+    middleware/          Shared API error handling
+    routes/              Employee endpoints
+```
 
 ## Run locally
 
@@ -31,25 +39,27 @@ The backend connects to PostgreSQL and exposes a health check. The employee API 
 - Node.js and npm
 - PostgreSQL
 
-### 1. Create the database
+### 1. Create the database and table
 
-In `psql`, run:
+Create the database in `psql`:
 
 ```sql
 CREATE DATABASE peopledesk;
 ```
 
-From the repository root, apply the schema:
+If the database already exists, skip the CREATE DATABASE command. From the repository root, apply the schema:
 
 ```bash
 psql -U postgres -d peopledesk -f server/database/schema.sql
 ```
 
-### 2. Configure the backend
+The schema uses `CREATE TABLE IF NOT EXISTS`, so it can be run again without creating a duplicate table.
 
-Copy `server/.env.example` to `server/.env` and set `DATABASE_URL` to match your local PostgreSQL user and password. The example file also includes the API port and allowed frontend origin.
+### 2. Configure the API
 
-### 3. Start the backend
+Copy `server/.env.example` to `server/.env`, then set `DATABASE_URL` to your local PostgreSQL connection. The example also sets the API port and the local client origin.
+
+### 3. Start the API
 
 ```bash
 cd server
@@ -57,9 +67,9 @@ npm install
 npm run dev
 ```
 
-The API uses port `5000` by default. Its health check is available at `http://localhost:5000/health`.
+The API runs on port `5000` by default. Check `http://localhost:5000/health` to confirm it is running.
 
-### 4. Start the frontend
+### 4. Start the client
 
 In a second terminal:
 
@@ -69,12 +79,16 @@ npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite.
+Open the local URL printed by Vite. The client uses `http://localhost:5000` by default; set `VITE_API_URL` when the API runs elsewhere.
 
-## Repository layout
+## API
 
-```text
-client/                 React application
-server/database/        PostgreSQL schema
-server/src/             Express API
-```
+| Method | Route | Purpose |
+| --- | --- | --- |
+| `GET` | `/employees` | List employees |
+| `POST` | `/employees` | Add an employee |
+| `PUT` | `/employees/:id` | Update an employee |
+| `DELETE` | `/employees/:id` | Remove an employee |
+| `GET` | `/health` | Check the API |
+
+Invalid input returns `400`, duplicate email addresses return `409`, and missing employee IDs return `404`.
