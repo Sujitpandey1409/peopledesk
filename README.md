@@ -81,6 +81,10 @@ npm run dev
 
 Open the local URL printed by Vite. The client uses `http://localhost:5000` by default; set `VITE_API_URL` when the API runs elsewhere.
 
+## Deployment
+
+For a reusable Render deployment checklist, environment-variable guide, verification steps, and platform notes, see [RENDER_DEPLOYMENT.md](./RENDER_DEPLOYMENT.md).
+
 ## API
 
 | Method | Route | Purpose |
