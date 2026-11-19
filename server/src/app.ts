@@ -4,10 +4,13 @@ import errorHandler from "./middleware/errorHandler";
 import employeeRoutes from "./routes/employeeRoutes";
 
 const app = express();
+const clientOrigin = new URL(
+  process.env.CLIENT_URL?.trim() || "http://localhost:5173",
+).origin;
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: clientOrigin,
   }),
 );
 app.use(express.json());
